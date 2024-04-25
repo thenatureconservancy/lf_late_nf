@@ -61,9 +61,11 @@ scls_descriptions_wrangled <- scls_descriptions %>%
 bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
   left_join(scls_descriptions_wrangled)
 
+
+## THERE IS AN ISSUE WITH THIS FINAL JOIN IN THAT SOME REF PERCENTS WILL BE MISSING
 bps_scl_nf_complete <- bps_scl_nf_complete %>%
   left_join(ref_con_long_wrangled)
-# I was too nervous to pipe in both joins :)
+
 
 
 # Calculate current scl percents  -----
