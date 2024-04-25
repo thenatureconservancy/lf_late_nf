@@ -58,13 +58,19 @@ scls_descriptions_wrangled <- scls_descriptions %>%
 
 # Join data to create complete dataframe (before any calculations) -----
 
+
+
+
+## THERE IS AN ISSUE WITH USING LEFT_JOIN IN THAT SOME REF PERCENTS ARE MISSING.  TESTING OTHER JOINS.
 bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
+  full_join(ref_con_long_wrangled)
+
+## The above join needs to work before proceeding!
+
+
+
+#bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
   left_join(scls_descriptions_wrangled)
-
-
-## THERE IS AN ISSUE WITH THIS FINAL JOIN IN THAT SOME REF PERCENTS WILL BE MISSING
-bps_scl_nf_complete <- bps_scl_nf_complete %>%
-  left_join(ref_con_long_wrangled)
 
 
 
