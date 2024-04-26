@@ -65,6 +65,8 @@ scls_descriptions_wrangled <- scls_descriptions %>%
 bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
   full_join(ref_con_long_wrangled)
 
+write.csv(bps_scl_nf_complete, "outputs/full_join_complete.csv")
+
 ## The above join needs to work before proceeding!
 
 
