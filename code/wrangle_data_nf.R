@@ -39,8 +39,10 @@ ref_con_long_wrangled <- ref_con_long %>%
   clean_names() %>%                                    
   # Standardizing column names to lowercase and underscores
   rename(bps_name = bp_s_name,
-         join_field = model_label)                      
+         join_field = model_label) %>%                     
   # Renaming the column bp_s_name to bps_name
+  filter(!is.na(ref_percent))
+######  Kori suggests removing where ref percent = NA
 
   
 scls_descriptions_wrangled <- scls_descriptions %>% 
@@ -58,25 +60,38 @@ scls_descriptions_wrangled <- scls_descriptions %>%
 
 # Join data to create complete dataframe (before any calculations) -----
 
+### From Amy!  Way to build a complete current table that has all the possible bps/scls combinations per forest
+new_current_data <- bps_scl_nf_wrangled %>%   
+  complete(label, nesting(bps_model, forestname)) 
 
 
+new_current_reference_data <- left_join(new_current_data, ref_con_long_wrangled, by = 'join_field')
 
-## THERE IS AN ISSUE WITH USING LEFT_JOIN IN THAT SOME REF PERCENTS ARE MISSING.  TESTING OTHER JOINS.
-bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
-  full_join(ref_con_long_wrangled)
+# remove sparse veg BpSs
+remove_codes <- c(0, 
+                  -1111,
+                  10100,
+                  10200,
+                  10300,
+                  10400,
+                  10600,
+                  10700)
 
-write.csv(bps_scl_nf_complete, "outputs/full_join_complete.csv")
-
-## The above join needs to work before proceeding!
-
-
-
-#bps_scl_nf_complete <- bps_scl_nf_wrangled %>%
-  left_join(scls_descriptions_wrangled)
-
+new_current_reference_data_clean <- new_current_reference_data %>%
+  select(-c(oid,
+            lc20_bps_220,
+            lc22_s_cla_230,
+            forests_r,
+            bps_name.y)) %>%
+  rename(bps_name = bps_name.x) 
 
 
-# Calculate current scl percents  -----
+### NOTES ABOUT THIS DATASET
+# bps_models that are in the remove_codes are sparsely vegetated so there are no reference conditions (LANDFIRE modeling rule) so could be removed.  I did not do this. 
+# it looks to me that all NA cells should be filled with the content from the row above except for the value and count fields
+
+
+# Calculate current scl percents NOT COMPLETED YET  -----
 
 bps_scl_nf_complete_calcs <- bps_scl_nf_complete %>%
   group_by(bps_model) %>%

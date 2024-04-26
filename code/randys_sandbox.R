@@ -1,6 +1,6 @@
 
 
-## Randy plays with joins
+## Randy plays with joins using fake data -----
 
 df1 <- data.frame(
   bps = c(1, 1, 1, 1, 1),
@@ -24,33 +24,14 @@ all_combinations <- expand.grid(join = unique(df1$join), forest = unique(df2$for
 # Perform a left join to retain all rows from df1 and matching rows from df2
 df_merged <- left_join(all_combinations, df2, by = c("join", "forest"))
 
+df_merged <- left_join(df_merged, df1, by = 'join')
 
 
+## Try with real data
+
+all_combinations_real <- expand.grid(join_field = unique(ref_con_long_wrangled$join_field), forestname = unique(bps_scl_nf_wrangled$forestname))
 
 
+real_joined <- left_join(all_combinations_real, bps_scl_nf_wrangled, by = c("join_field", "forestname"))
 
-library(zoo)
-
-
-  
-
-ref_con_scls <- full_join(ref_con_long_wrangled, scls_descriptions_wrangled, by ='join_field')
-
-ref_con_scls <- ref_con_scls %>%
-  select(-c(model_code.x,
-            model_code.y,
-            ref_label
-            ))
-
-## remove any extra stuff from bps_scl_nf_wrangled
-
-bps_scl_nf_wrangled_minimal <- bps_scl_nf_wrangled %>%
-  select(-c(oid,
-            value,
-            lc20_bps_220,
-            forests_r,
-            lc22_s_cla_230,
-            bps_code,
-            bps_model))
-
-complete_bps_ref_cur_scl <- full_join(bps_scl_nf_wrangled_minimal, ref_con_scls, by = 'join_field')
+real_joined <- left_join(real_joined, ref_con_long_wrangled, by = 'join_field')
